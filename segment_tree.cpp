@@ -7,6 +7,7 @@ int num[(int)1e5+10];
 int arr[(int)4e5+10];
 
 //1,n,1
+//build segtree, l,r belongs to arr[v]
 void build(int l, int r, int v){
     if(l==r){
         arr[v] = num[l];
@@ -18,7 +19,7 @@ void build(int l, int r, int v){
         arr[v] = min(arr[v*2],arr[v*2+1]);
     }
 }
-
+//update segtree node
 void update(int l, int r, int v, int idx, int val){
     if(l==r){
         arr[v] = val;
@@ -29,7 +30,7 @@ void update(int l, int r, int v, int idx, int val){
         arr[v] = min(arr[v*2],arr[v*2+1]);
     }
 }
-
+//return tl,tr query
 int query(int l, int r, int tl, int tr, int v){
     if(tl<=l && r<=tr){
         return arr[v];
