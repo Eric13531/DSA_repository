@@ -8,12 +8,14 @@ using namespace std;
 ll bit[e], freq[e];
 int N,M;
 
+//update with h(i)
 void update(int x, int val, ll arr[]){
     for(; x<=e; x+=(x&(-x))){
         arr[x] += val;
     }
 }
 
+//sum with g(i)
 ll sum(int x, ll arr[]){
     ll sum = 0;
     for(; x>0; x-=(x&-x)){
@@ -22,11 +24,14 @@ ll sum(int x, ll arr[]){
     return sum;
 }
 
+
 int main() {
     cin.sync_with_stdio(0);
     cin.tie(0);
 
     cin>>N>>M;
+    //to build, update all elements
+    //O(NlogN) construction
     for(int i = 1; i<=N; i++){
         int k;
         cin>>k;
@@ -43,6 +48,7 @@ int main() {
         if(c=='C'){
             int x,v;
             cin>>x>>v;
+            //get previous value and add v-prev
             ll prev = sum(x,bit) - sum(x-1,bit); 
             update(x,v-prev,bit);
             update(prev,-1,freq);
