@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+//DMOJ MOBILE PHONES
+
+#define ll long long
+#define MAXN 1034
+
+ll arr[MAXN][MAXN] = {{0}};
+int Q=0;
+
+void update(int x, int y, int val, ll arr[][MAXN]){
+	//must create local variable for all dimensions other than x
+    for(int a = x; a<MAXN; a+= (a&-a)){
+        for(int b = y; b<MAXN; b+= (b&-b)){
+            arr[a][b]+=val;
+        }
+    }
+}
+
+ll sum(int x, int y, ll arr[][MAXN]){
+	//must create local variable for all dimensions other than x
+    ll sum = 0;
+    for(int a = x; a>0; a-= (a&-a)){
+        for(int b = y; b>0; b-= (b&-b)){
+            sum += arr[a][b];
+        }
+    }
+    return sum;
+}
+
+int main() {
+    cin.sync_with_stdio(0);
+    cin.tie(0);
+
+    while(Q!=3){
+        cin>>Q;
+        if(Q==0){
+            int a; cin>>a;
+        }	
+        if(Q==1){
+            int x,y,a;cin>>x>>y>>a;
+            x++;y++;
+            update(x,y,a,arr);
+        }
+        if(Q==2){
+            int a,b,c,d; cin>>a>>b>>c>>d;
+            a++;b++;c++;d++;
+            cout<<sum(c,d,arr)-sum(a-1,d,arr)-sum(c,b-1,arr)+sum(a-1,b-1,arr)<<"\n";
+        }
+        if(Q==3){
+            return 0;
+        }
+    }
+
+    return 0;
+}
