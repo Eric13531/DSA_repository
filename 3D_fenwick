@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+using namespace std;
+//DMOJ STALACTITES
+
+#define ll long long
+#define MAXN 260
+int N,Q;
+char id;
+ll bit[MAXN][MAXN][MAXN] = {};
+int num[MAXN][MAXN][MAXN] = {};
+
+void update(int x, int y, int z, int v){
+	//must create local variable for all dimensions other than x
+    for(; x <= N;  x+=(x&(-x))){
+        for(int b = y; b <= N;  b+=(b&(-b))){
+            for(int c = z; c <= N;  c+=(c&(-c))){
+                bit[x][b][c] += v;
+            }
+        }
+    }
+}
+
+ll sum(int x, int y, int z){
+	//must create local variable for all dimensions other than x
+    ll sum = 0;
+    for(; x>0; x-=(x&(-x))){
+        for(int b = y; b>0; b-=(b&(-b))){
+            for(int c = z; c>0; c-=(c&(-c))){
+                sum += bit[x][b][c];
+            }
+        }
+    }
+
+    return sum;
+}
+
+ll query(int x1, int y1, int z1, int x2, int y2, int z2){
+    return sum(x2,y2,z2)-sum(x2,y2,z1-1)-sum(x1-1,y2,z2)-sum(x2,y1-1,z2)+sum(x2,y1-1,z1-1)+sum(x1-1,y2,z1-1)+sum(x1-1,y1-1,z2) - sum(x1-1, y1-1, z1-1);
+}
+
+void printArr(ll A[MAXN][MAXN][MAXN]){
+    for(int i = 0; i <= N; i++){
+        for(int j = 0; j <= N; j++){
+            for(int k = 0; k <= N; k++){
+                cout<<query(i,j,k,i,j,k)<<" ";
+            }
+            cout<<"\n";
+        }
+        cout<<"\n";
+    }
+}
+
+void printArr(int A[MAXN][MAXN][MAXN]){
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= N; j++){
+            for(int k = 1; k <= N; k++){
+                cout<<A[i][j][k]<<" ";
+            }
+            cout<<"\n";
+        }
+        cout<<"\n";
+    }
+}
+
+ll s = 0;
+
+int main() {
+    cin.sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>N>>Q;
+
+    
+
+    for(int i = 0; i<Q; i++){
+        cin>>id;
+        if(id=='C'){
+            int x,y,z,v; cin>>x>>y>>z>>v;
+            update(x,y,z,v- (int)query(x,y,z,x,y,z));
+            //printArr(bit);
+            //printArr(num);
+        }
+        if(id=='S'){
+            //printArr(bit);
+            //printArr(num);
+            int a,b,c,d,e,f; cin>>a>>b>>c>>d>>e>>f;
+            s += query(a,b,c,d,e,f);
+        }
+    }
+
+    cout<<s;
+
+    return 0;
+}
