@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define MAXN 1010
+
+int N,e;
+int l[MAXN];
+
+int sp[10][10][MAXN][MAXN];
+
+void init(vector<vector<int>> arr){
+    l[1]=0;
+    for(int i = 2; i<MAXN; i++){
+        l[i] = l[i/2]+1;
+    }
+    N = arr.size();
+    e = l[N]+1;
+    
+    for(int i = 0; i<N; i++){
+        for(int j = 0; j<N; j++){
+            sp[0][0][i][j] = arr[i][j];
+        }
+    }
+
+    //sparse each row
+    for(int i = 0; i<N; i++){
+        for(int ex=1; ex<e; ex++){
+            for(int j = 0; j<N-(1<<ex)+1; j++){
+                sp[ex][0][i][j] = min(sp[ex-1][0][i][j], sp[ex-1][0][i][j+(1<<(ex-1))]);
+            }
+        }
+    }
+
+
+    //sparse each column per binary row length
+    for(int j = 0; j<N; j++){
+        for(int ex = 0; ex<e; ex++){
+            for(int ey = 1; ey<e; ey++){
+                    for(int i = 0; i<N-(1<<ey)+1; i++){
+                        sp[ex][ey][i][j] = min(sp[ex][ey-1][i][j], sp[ex][ey-1][i+(1<<(ey-1))][j]);
+                    }
+                
+            }
+        }
+    }
+}
+
+int query (int a, int b, int c, int d){
+    int R = l[b-a+1];
+    int C = l[d-c+1];
+
+
+    return min(min(sp[C][R][a][c],
+    sp[C][R][a][d-(1<<C)+1]),
+    min(sp[C][R][b-(1<<R)+1][c],
+    sp[C][R][b-(1<<R)+1][d-(1<<C)+1]));
+
+}
