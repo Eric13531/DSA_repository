@@ -5,10 +5,10 @@ using namespace std;
 #define ll long long
 #define MAXN 1034
 
-ll arr[MAXN][MAXN] = {{0}};
+int arr[MAXN][MAXN] = {{0}};
 int Q=0;
 
-void update(int x, int y, int val, ll arr[][MAXN]){
+void update(int x, int y, int val, int arr[][MAXN]){
 	//must create local variable for all dimensions other than x
     for(int a = x; a<MAXN; a+= (a&-a)){
         for(int b = y; b<MAXN; b+= (b&-b)){
@@ -17,7 +17,7 @@ void update(int x, int y, int val, ll arr[][MAXN]){
     }
 }
 
-ll sum(int x, int y, ll arr[][MAXN]){
+ll sum(int x, int y, int arr[][MAXN]){
 	//must create local variable for all dimensions other than x
     ll sum = 0;
     for(int a = x; a>0; a-= (a&-a)){
