@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long ll;
+typedef pair<int, int> pii;
+
+const int MAXN = 10005;
+int k = 15;
+
+//log can be defined as
+//log[1] = 0; log[i] = log[i/2] + 1
+
+//sparse tables to store min/max
+int minSp[MAXN][16], maxSp[MAXN][16];
+int N, Q; int arr[MAXN];
+
+//initialize sparse tables
+//sp[i][0] = arr[i]
+void build() {
+    for(int i=0; i<N; i++) {
+        minSp[i][0] = arr[i]; maxSp[i][0] = arr[i];
+    }
+
+    for(int j=1; j<=k; j++) {
+        for(int i=0; i+(1<<(j-1))<N; i++) {
+            minSp[i][j] = min(minSp[i][j-1], minSp[i+(1<<(j-1))][j-1]);
+            maxSp[i][j] = max(maxSp[i][j-1], maxSp[i+(1<<(j-1))][j-1]);
+        }
+    }
+}
+
+int main() {
+    cin.tie(0);
+    cin.sync_with_stdio(0);
+
+    cin>>N>>Q;
+    for(int i=0; i<N; i++) {
+        cin>>arr[i];
+    }
+    build();
+
+    for(int i=0; i<Q; i++) {
+        int l, r; cin>>l>>r;
+        //sp is 0-indexed
+        l--; r--;
+
+        k = (int) log2(r-l+1);
+        int minAns = min(minSp[l][k], minSp[r-(1<<k)+1][k]);
+        int maxAns = max(maxSp[l][k], maxSp[r-(1<<k)+1][k]);
+        cout<<maxAns-minAns<<'\n';
+    }
+
+}
