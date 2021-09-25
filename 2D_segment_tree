@@ -1,0 +1,100 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long ll;
+
+int N,M;
+vector<vector<int>> arr;
+vector<vector<ll>> A; 
+
+//Build from x, first condense to single column by using build_x
+//Then condense to a single square with build_y
+//Build_x stop recursing, and for each set of columns, compress to one row with build_y
+//when c>1, and r==1, A[vx][vy] = A[vx*2][vy] + A[vx*2+1][vy]; and defines all parents
+
+void build_y(int vx, int vy, int lx, int rx, int ly, int ry){
+    if(ly==ry){
+        if(lx==rx){
+            A[vx][vy] = arr[lx][ly];
+        }
+        else{
+            A[vx][vy] = A[vx*2][vy] + A[vx*2+1][vy];
+        }
+    }else{
+        int my = (ly+ry)/2;
+        build_y(vx,vy*2,lx,rx,ly,my);
+        build_y(vx,vy*2+1,lx,rx,my+1,ry);
+        A[vx][vy] = A[vx][vy*2]+A[vx][vy*2+1];
+    }
+}
+
+//build_x(1, 1, N)
+
+void build_x(int vx, int lx, int rx){
+    if(lx!=rx){
+        int mx = (lx+rx)/2;
+        build_x(vx*2, lx, mx);
+        build_x(vx*2+1, mx+1, rx);
+
+    }
+    build_y(vx,1,lx, rx, 1, M);
+}
+
+
+int sum_y(int vx, int vy, int ly, int ry, int qly, int qry){
+    if(ly==qly&&ry==qry){
+        return A[vx][vy];
+    }
+    if(qly>qry) return 0;
+    int my = (ly+ry)/2;
+    return sum_y(vx,vy*2,ly,my,qly,min(qry,my)) + sum_y(vx,vy*2+1, my+1,ly,max(qly,my+1),qry);
+}
+//1,1,N,qlx,qrx,qly,qry
+int sum_x(int vx, int lx, int rx, int qlx, int qrx, int qly, int qry){
+    if(lx==qlx&&rx==qrx){
+        return sum_y(vx, 1, 1, M, qly, qry);
+    }
+    if(qlx>qrx) return 0;
+    int mx = (lx+rx)/2;
+    return sum_x(vx*2, lx,mx,qlx,min(mx,qrx),qly,qry) + sum_x(vx*2+1,mx+1,rx,max(mx+1,qlx),qrx,qly,qry);
+}
+
+void update_y(int vx, int vy, int lx, int rx, int ly, int ry, int posy, int val){
+    if(ly==ry){
+        if(lx==rx){
+            A[vx][vy]=val;
+        }
+        else{
+            A[vx][vy] = A[vx*2][vy] + A[vx*2+1][vy];
+        }
+    }
+    else{
+        int my = (ly+ry)/2;
+        if(posy<=my) update_y(vx,vy*2,lx,rx,ly,my,posy,val);
+        else update_y(vx,vy*2+1,lx,rx,my+1,ry,posy,val);
+        A[vx][vy] = A[vx][vy*2] + A[vx][vy*2+1];
+    }
+}
+
+void update_x(int vx, int lx, int rx, int posx, int posy, int val){
+    if(lx!=rx){
+        int mx = (lx+rx)/2;
+        if(posx<=mx){
+            update_x(vx*2,lx,mx,posx,posy,val);
+        }
+        else{
+            update_x(vx*2+1,mx+1,rx,posx,posy,val);
+        }
+    }
+    update_y(vx,1,lx,rx,1,M,posy,val);
+}
+
+int main() {
+    cin.sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>N>>M;
+    A.resize(4*N+1,vector<ll>(4*M+1));
+    
+    return 0;
+}
