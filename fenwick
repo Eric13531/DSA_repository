@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define e ((int)1e6+10)
+
+//sum fenwick and frequency array fenwick
+ll bit[e], freq[e];
+int N,M;
+
+void update(int x, int val, ll arr[]){
+    for(; x<=e; x+=(x&(-x))){
+        arr[x] += val;
+    }
+}
+
+ll sum(int x, ll arr[]){
+    ll sum = 0;
+    for(; x>0; x-=(x&-x)){
+        sum += arr[x];
+    }
+    return sum;
+}
+
+int main() {
+    cin.sync_with_stdio(0);
+    cin.tie(0);
+
+    cin>>N>>M;
+    for(int i = 1; i<=N; i++){
+        int k;
+        cin>>k;
+        bit[0]=0;
+        freq[0]=0;
+        
+        update(i,k,bit); 
+        update(k,1,freq);
+    }
+
+    for(int i = 0; i<M; i++){
+        char c;
+        cin>>c;
+        if(c=='C'){
+            int x,v;
+            cin>>x>>v;
+            ll prev = sum(x,bit) - sum(x-1,bit); 
+            update(x,v-prev,bit);
+            update(prev,-1,freq);
+            update(v,1,freq);
+        }
+        if(c=='S'){
+            int l,r;
+            cin>>l>>r;
+            cout << sum(r,bit) - sum(l-1,bit)<<"\n";
+        }
+        if(c=='Q'){
+            int v;
+            cin>>v;
+            cout << sum(v,freq)<<"\n";
+        }
+    }
+
+    return 0;
+}
