@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define MAXN 100010
+
+//stores parent
+int dsu[MAXN], rk[MAXN];
+
+//initialize single node
+void build(int v){
+    dsu[v] = v;
+    rk[v] = 0;
+}
+//After the first find, stores root as parent of v
+int find(int v){
+    if(dsu[v] == v){
+        return v;
+    }
+    return dsu[v] = find(dsu[v]);
+}
+//joins two sets by the parents, joins smaller rank to larger, incrememts rank if same
+bool join(int a, int b){
+    a = find(a);
+    b=find(b);
+    if(a==b) return false;
+    if(a!=b){
+        if(rk[a]<rk[b]){
+            swap(a,b);
+        }
+        dsu[b] = a;
+        if(rk[a]==rk[b]){
+            rk[a]++;
+        }
+        return true;
+    }
+}
+
+vector<int> edge;
+
+
+int main() {
+    cin.sync_with_stdio(0);
+    cin.tie(0);
+
+    int N,M; cin>>N>>M;
+
+    for(int i = 1; i<=N; i++) build(i);
+
+    for(int i = 1; i<=M; i++){
+        int a,b; cin>>a>>b;
+        if(!join(a,b)) continue;
+        else edge.push_back(i);
+    }
+
+    if(edge.size()==N-1)
+    for(int i = 0; i<edge.size(); i++){
+        cout<<edge[i]<<"\n";
+    }
+    else cout<<"Disconnected Graph";
+}
